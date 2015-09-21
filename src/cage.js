@@ -14,14 +14,11 @@
     $.fn.nickcage = function( options ) {
         
         //apply options
-
-        console.log('running');
-
         var cage = $.fn.nickcage.getRandom(cageImgs);
-        var direction = $.fn.nickcage.getRandom(directions);
+        var d = $.fn.nickcage.getRandom(directions);
 
         console.log('cage', cage);
-        console.log('dir', direction);
+        console.log('dir', d);
         console.log('body', this);
 
         //build img
@@ -31,31 +28,35 @@
         });
 
         //position image
-        var top = (direction.attr === 'top' ? -(cage.height) : 0);
-        var right = (direction.attr === 'right' ? this[0].scrollWidth + (cage.height) : 0);
-        var left = (direction.attr === 'left' ? -(cage.height) : 0);
-        img.css({
+        var top = (d.attr === 'top' ? -(cage.height) : 0);
+        var right = (d.attr === 'right' ? -this[0].scrollWidth + (cage.height) : 0);
+        var left = (d.attr === 'left' ? -(cage.height) : 0);
+        var params = {
         	'z-index': 9999,
         	position: 'absolute'
-        });
+        };
         if (d.attr === 'top') {
-    		params = { top: "+=" + (cage.height * 2) };
+    		params.top = top;
     	}
     	if (d.attr === 'right') {
-    		params = { right: "-=" + (cage.height * 2) };
+    		params.right = right;
     	}
     	if (d.attr === 'left') {
-    		params = { left: "+=" + (cage.width * 2) };
+    		params.left = left;
     	}
+
+        console.log(params);
+
+        img.css(params);
         
-        $.fn.nickcage.rotateImg(img, direction.degrees);
+        $.fn.nickcage.rotateImg(img, d.degrees);
 
         //add to page
         this.append(img);
         var $c = $('#cage');
 
         //set timeout
-        $.fn.nickcage.startTimer($c, cage, direction, $.fn.nickcage.getRandomInt(4000, 8000));
+        $.fn.nickcage.startTimer($c, cage, d, $.fn.nickcage.getRandomInt(4000, 8000));
 
         //listen for cheat code
 
@@ -70,10 +71,10 @@
     		params = { top: "+=" + (cage.height * 2) };
     	}
     	if (d.attr === 'right') {
-    		params = { right: "-=" + (cage.height * 2) };
+    		params = { right: "+=" + (cage.height * 2) };
     	}
     	if (d.attr === 'left') {
-    		params = { left: "+=" + (cage.width * 2) };
+    		params = { left: "+=" + (cage.height * 2) };
     	}
 
 	    $c.animate(params, 5000, function() {
@@ -82,15 +83,6 @@
 	};
 
 	$.fn.nickcage.rotateImg = function( $c, degrees ) {
-		/*
-		.rotated {
-		  transform: rotate(90deg);
-		  -ms-transform: rotate(90deg);
-		  -moz-transform: rotate(90deg);
-		  -webkit-transform: rotate(90deg);
-		  -o-transform: rotate(90deg);
-		}
-		*/
 		$c.css({
 			'transform': 'rotate(' + degrees + 'deg)',
 		  	'-ms-transform': 'rotate(' + degrees + 'deg)',
