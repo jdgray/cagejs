@@ -27,6 +27,25 @@
         	src: 'img/' + cage.img
         });
 
+        //track face test
+        var objects = new tracking.ObjectTracker(['face', 'eye', 'mouth']);
+        objects.on('track', function(event) {
+            if (event.data.length === 0) {
+                // No objects were detected in this frame.
+
+            } else {
+                event.data.forEach(function(rect) {
+                  // rect.x, rect.y, rect.height, rect.width
+
+                  console.log(rect);
+
+                });
+            }
+        });
+        tracking.track('#cage-test', objects);
+
+
+
         //position image
         var top = (d.attr === 'top' ? -(cage.height) : 0);
         var right = (d.attr === 'right' ? -this[0].scrollWidth + (cage.height) : 0);
