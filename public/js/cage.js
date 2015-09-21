@@ -28,7 +28,8 @@
         });
 
         //track face test
-        var objects = new tracking.ObjectTracker(['face', 'eye', 'mouth']);
+        //var objects = new tracking.ObjectTracker(['face', 'eye', 'mouth']);
+        var objects = new tracking.ObjectTracker(['eye']);
         objects.on('track', function(event) {
             if (event.data.length === 0) {
                 // No objects were detected in this frame.
