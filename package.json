@@ -1,0 +1,22 @@
+{
+  "name": "cagejs",
+  "version": "0.0.1",
+  "description": "cagejs website example",
+  "main": "index.html",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jdgray/cagejs.git"
+  },
+  "keywords": [
+    "cagejs"
+  ],
+  "author": "Jonathon Gray",
+  "license": "ISC",
+  "dependencies": {
+    "express": "~4.0.0",
+    "debug": "~0.7.4"
+  }
+}
