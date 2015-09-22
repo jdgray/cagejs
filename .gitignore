@@ -3,3 +3,5 @@
 /.DS_Store
 
 /public/node_modules/
+
+/public/.DS_Store
