@@ -1,6 +1,6 @@
 (function ( $ ) {
  	
- 	var defaultTimeoutMin, defaultTimeoutMax, loop, cheatCode, allowTracking, adjustX, adjustY;
+ 	var defaultTimeoutMin, defaultTimeoutMax, loop, cheatCode, allowTracking, adjustX, adjustY, maxRuns;
  	var imgs = [
  		{ img: '../img/cage.png', width: 256, height: 256 } 
  	];
@@ -8,8 +8,9 @@
  		{ attr: 'left', degrees: 90 },
  		{ attr: 'right', degrees: 270 },
  		{ attr: 'top', degrees: 180 },
+        { attr: 'bottom', degrees: 0 },
  	];
-    var body, tAdjustY, tAdjustX;
+    var body, tAdjustY, tAdjustX, runs = 0;
 
     $.fn.nickcage = function( options ) {
         
@@ -22,6 +23,7 @@
         imgs = options.imgs || imgs;
         adjustY = options.adjustY || 0;
         adjustX = options.adjustX || 0; 
+        maxRuns = options.maxRuns || 5;
 
         body = this;
 
@@ -32,6 +34,10 @@
     };
 
     $.fn.nickcage.cageMe = function() {
+        
+        tAdjustY = 0;
+        tAdjustX = 0;
+
         //get randoms
         var cage = $.fn.nickcage.getRandom(imgs);
         var d = $.fn.nickcage.getRandom(directions);
@@ -70,18 +76,16 @@
 
         //listen for cheat code
 
+        runs++;
 
     };
 
     $.fn.nickcage.trackEyes = function( $c, cage, d ) {
-        tAdjustY = 0;
         //var objects = new tracking.ObjectTracker(['face', 'eye', 'mouth']);
         var objects = new tracking.ObjectTracker(['eye']);
         objects.on('track', function(event) {
-            if (event.data.length === 0) {
-                // No objects were detected in this frame.
-            } else {
-                tAdjustY = adjustY += event.data[0].y;
+            if (event.data.length) {
+                tAdjustY = adjustY + event.data[0].y;
             }
         });
         //small delay to make sure the image is ready
@@ -91,20 +95,8 @@
     $.fn.nickcage.showCage = function( $c, cage, d ) {
     	
     	var params = {};
-        console.log(tAdjustY);
         var move = cage.height - tAdjustY;
-
-    	if (d.attr === 'top') {
-    		params = { top: "+=" + move };
-    	}
-    	if (d.attr === 'right') {
-    		params = { right: "+=" + move };
-    	}
-    	if (d.attr === 'left') {
-    		params = { left: "+=" + move };
-    	}
-
-        console.log(params);
+        params[d.attr] = "+=" + move;
 
 	    $c.animate(params, 5000, function() {
 	    	console.log('finished');
@@ -115,19 +107,12 @@
     $.fn.nickcage.hideCage = function( $c, cage, d, m ) {
         setTimeout(function(){ 
             
-            if (d.attr === 'top') {
-                params = { top: "-=" + m };
-            }
-            if (d.attr === 'right') {
-                params = { right: "-=" + m };
-            }
-            if (d.attr === 'left') {
-                params = { left: "-=" + m };
-            }
+            var params = {};
+            params[d.attr] = "-=" + m;
 
             $c.animate(params, 5000, function() {
                 
-                if (loop) {
+                if (loop && runs < maxRuns) {
                     $.fn.nickcage.cageMe();
                 }
 
@@ -138,9 +123,6 @@
     };
 
     $.fn.nickcage.positionImage = function( img, cage, d ) {
-        var top = (d.attr === 'top' ? -(cage.height) : 0);
-        var right = (d.attr === 'right' ? -body[0].scrollWidth + (cage.height) : 0);
-        var left = (d.attr === 'left' ? -(cage.height) : 0);
         var params = {
             'z-index': 9999,
             position: 'absolute',
@@ -150,17 +132,11 @@
             '-webkit-transform': 'rotate(' + d.degrees + 'deg)',
             '-o-transform': 'rotate(' + d.degrees + 'deg)'
         };
-        if (d.attr === 'top') {
-            params.top = top;
-        }
-        if (d.attr === 'right') {
-            params.right = right;
-        }
-        if (d.attr === 'left') {
-            params.left = left;
-        }
+        params[d.attr] = -(cage.height);
+        
         img.removeAttr('style');
         img.css(params);
+
     };
 
 	$.fn.nickcage.startTimer = function( $c, cage, d, t) {
