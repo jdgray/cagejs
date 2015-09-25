@@ -17,14 +17,14 @@
         //apply options
         defaultTimeoutMin = options.timeoutMin || 2000;
         defaultTimeoutMax = options.timeoutMax || 8000;
-        loop = options.loop || true;
-        cheatCode = options.cheatCode || true;
-        allowTracking = options.tracking || true;
+        loop = (!options.loop ? false : true);
+        cheatCode = (!options.cheatCode ? false : true);
+        allowTracking = (!options.tracking ? false : true);
         imgs = options.imgs || imgs;
         adjustY = options.adjustY || 0;
         adjustX = options.adjustX || 0; 
         maxRuns = options.maxRuns || 5;
-
+]
         body = this;
 
         //cage me
@@ -44,6 +44,8 @@
 
         console.log('cage', cage);
         console.log('dir', d);
+
+        console.log(loop);
 
         //build img
         var isNew = false;
@@ -114,6 +116,8 @@
                 
                 if (loop && runs < maxRuns) {
                     $.fn.nickcage.cageMe();
+                } else {
+                    $c.remove();
                 }
 
             });
